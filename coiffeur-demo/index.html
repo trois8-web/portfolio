@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Léane — Salon de coiffure à Bordeaux (site fictif de démonstration)</title>
+<style>
+  :root {
+    --brun: #211d1a;
+    --brun-clair: #5c554e;
+    --creme: #f7f4f0;
+    --creme-fonce: #e8e2da;
+    --or: #b78d63;
+    --or-fonce: #96704a;
+    --blanc: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--brun);
+    background: var(--creme);
+    line-height: 1.6;
+  }
+  h1, h2, h3 { font-weight: normal; letter-spacing: 0.02em; }
+
+  .demo-banner {
+    background: var(--brun);
+    color: var(--creme);
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    letter-spacing: 0.05em;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    background: rgba(250, 245, 236, 0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--creme-fonce);
+    z-index: 100;
+  }
+  nav {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .logo { font-size: 1.3rem; letter-spacing: 0.08em; }
+  .logo span { color: var(--or); }
+  nav ul {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  nav a { color: var(--brun); text-decoration: none; transition: color 0.2s; }
+  nav a:hover { color: var(--or); }
+
+  .hero {
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(201,143,61,0.18), transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(107,79,53,0.12), transparent 50%),
+      var(--creme);
+    text-align: center;
+    padding: 110px 24px 90px;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    margin-bottom: 18px;
+    line-height: 1.15;
+  }
+  .hero p.sub {
+    font-size: 1.15rem;
+    color: var(--brun-clair);
+    max-width: 540px;
+    margin: 0 auto 36px;
+    font-style: italic;
+  }
+  .filet {
+    width: 70px; height: 3px;
+    background: var(--or);
+    margin: 0 auto 28px;
+    border-radius: 2px;
+  }
+  .btn {
+    display: inline-block;
+    background: var(--or);
+    color: var(--blanc);
+    padding: 14px 36px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn:hover { background: var(--or-fonce); transform: translateY(-2px); }
+
+  section { padding: 80px 24px; }
+  .inner { max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; margin-bottom: 12px; }
+  .section-sub {
+    text-align: center;
+    color: var(--brun-clair);
+    font-style: italic;
+    margin-bottom: 48px;
+  }
+
+  .produits { background: var(--blanc); }
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px;
+  }
+  .carte {
+    background: var(--creme);
+    border: 1px solid var(--creme-fonce);
+    border-radius: 6px;
+    padding: 36px 28px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .carte:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(62,44,28,0.1);
+  }
+  .carte .icone {
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--or);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blanc);
+    font-size: 1.4rem;
+    font-family: Georgia, serif;
+  }
+  .carte h3 { font-size: 1.2rem; margin-bottom: 10px; }
+  .carte p { font-size: 0.95rem; color: var(--brun-clair); }
+
+  .apropos { background: var(--creme); }
+  .apropos .inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .apropos .visuel {
+    aspect-ratio: 4/3;
+    border-radius: 6px;
+    background:
+      linear-gradient(135deg, rgba(201,143,61,0.35), rgba(107,79,53,0.5)),
+      repeating-linear-gradient(45deg, var(--creme-fonce) 0 12px, var(--creme) 12px 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brun-clair);
+    font-style: italic;
+    font-size: 0.9rem;
+    border: 1px solid var(--creme-fonce);
+  }
+  .apropos h2 { font-size: 2rem; margin-bottom: 20px; }
+  .apropos p { margin-bottom: 16px; color: var(--brun-clair); }
+  .apropos strong { color: var(--brun); }
+
+  .infos { background: var(--brun); color: var(--creme); }
+  .infos .section-title { color: var(--creme); }
+  .infos .grille-infos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 40px;
+    margin-top: 48px;
+  }
+  .bloc-info h3 {
+    color: var(--or);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .bloc-info p, .bloc-info li {
+    color: rgba(250,245,236,0.85);
+    font-size: 0.98rem;
+  }
+  .bloc-info ul { list-style: none; }
+  .bloc-info li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(250,245,236,0.12);
+  }
+
+  footer {
+    background: var(--brun);
+    border-top: 1px solid rgba(250,245,236,0.15);
+    color: rgba(250,245,236,0.6);
+    text-align: center;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 720px) {
+    nav { justify-content: center; }
+    .apropos .inner { grid-template-columns: 1fr; }
+    section { padding: 56px 20px; }
+    .hero { padding: 70px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">SITE FICTIF — DÉMONSTRATION DE PORTFOLIO. Cette entreprise n'existe pas.</div>
+
+<header>
+  <nav>
+    <div class="logo">Studio <span>Léane</span></div>
+    <ul>
+      <li><a href="#produits">Prestations</a></li>
+      <li><a href="#apropos">Le salon</a></li>
+      <li><a href="#infos">Horaires &amp; rendez-vous</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="filet"></div>
+  <h1>Votre style, révélé<br>par des mains expertes</h1>
+  <p class="sub">Salon de coiffure au cœur des Chartrons, à Bordeaux.
+  Coupes sur mesure, colorations végétales, conseil personnalisé.</p>
+  <a href="#infos" class="btn">Prendre rendez-vous</a>
+</section>
+
+<section class="produits" id="produits">
+  <div class="inner">
+    <h2 class="section-title">Nos prestations</h2>
+    <p class="section-sub">Chaque rendez-vous commence par un diagnostic personnalisé, offert.</p>
+    <div class="grille">
+      <div class="carte">
+        <div class="icone">Cp</div>
+        <h3>Coupe &amp; coiffage</h3>
+        <p>Coupe sur mesure femme, homme et enfant, précédée d'un diagnostic capillaire et suivie d'un coiffage complet.</p>
+      </div>
+      <div class="carte">
+        <div class="icone">Cl</div>
+        <h3>Coloration végétale</h3>
+        <p>Colorations 100 % végétales et balayages doux, sans ammoniaque, pour des reflets naturels qui respectent le cheveu.</p>
+      </div>
+      <div class="carte">
+        <div class="icone">Sn</div>
+        <h3>Soins profonds</h3>
+        <p>Rituels de soin en cabine : masques restructurants, massage du cuir chevelu, protocole adapté à votre nature de cheveu.</p>
+      </div>
+      <div class="carte">
+        <div class="icone">Mr</div>
+        <h3>Mariage &amp; événements</h3>
+        <p>Chignons et coiffures d'exception, essai inclus. Déplacement possible à domicile le jour J.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="apropos" id="apropos">
+  <div class="inner">
+    <div class="visuel">[ Photo du salon — fournie par le client ]</div>
+    <div>
+      <h2>Un salon à taille humaine</h2>
+      <p>Fondé par <strong>Léane Moreau</strong>, coloriste formée à Paris pendant dix ans, le Studio accueille au maximum <strong>trois clientes à la fois</strong> : ici, personne n'attend avec une serviette sur la tête.</p>
+      <p>Nous avons choisi des gammes <strong>naturelles et végétales</strong> — colorations sans ammoniaque, soins aux actifs botaniques — parce que la beauté du cheveu commence par sa santé.</p>
+      <p>Chaque rendez-vous dure le temps qu'il faut. C'est plus long. C'est ce qui fait la différence.</p>
+    </div>
+  </div>
+</section>
+
+<section class="infos" id="infos">
+  <div class="inner">
+    <h2 class="section-title">Horaires &amp; rendez-vous</h2>
+    <div class="grille-infos">
+      <div class="bloc-info">
+        <h3>Horaires</h3>
+        <ul>
+          <li><span>Mardi — Mercredi</span><span>9h30 – 18h30</span></li>
+          <li><span>Jeudi — Vendredi</span><span>9h30 – 20h00</span></li>
+          <li><span>Samedi</span><span>9h00 – 17h00</span></li>
+          <li><span>Dimanche — Lundi</span><span>Fermé</span></li>
+        </ul>
+      </div>
+      <div class="bloc-info">
+        <h3>Adresse</h3>
+        <p>8 rue Notre-Dame<br>33000 Bordeaux</p>
+        <p style="margin-top:12px">Tram B — Chartrons<br>Parking Cité Mondiale à 3 min</p>
+      </div>
+      <div class="bloc-info">
+        <h3>Rendez-vous</h3>
+        <p>05 56 00 00 00</p>
+        <p style="margin-top:12px">contact@studio-leane.example</p>
+        <p style="margin-top:12px">Uniquement sur rendez-vous. Prestations mariage : réservez 3 mois à l'avance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Site fictif réalisé à des fins de démonstration de portfolio — l'entreprise « Studio Léane » n'existe pas.
+</footer>
+
+</body>
+</html>

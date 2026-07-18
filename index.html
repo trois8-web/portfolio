@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Création de sites vitrines</title>
+<style>
+  :root {
+    --fond: #101014;
+    --carte: #18181e;
+    --texte: #eceaf0;
+    --dim: #8f8c99;
+    --accent: #7c6cf0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--fond);
+    color: var(--texte);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .wrap { max-width: 720px; width: 100%; }
+  h1 { font-size: clamp(1.6rem, 4.5vw, 2.4rem); font-weight: 600; line-height: 1.2; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--dim); margin: 14px 0 40px; font-size: 0.98rem; }
+  .demos { display: grid; gap: 16px; }
+  a.demo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--carte);
+    border: 1px solid rgba(236,234,240,0.08);
+    border-radius: 12px;
+    padding: 22px 26px;
+    text-decoration: none;
+    color: var(--texte);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  a.demo:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .demo h2 { font-size: 1.05rem; font-weight: 600; }
+  .demo p { color: var(--dim); font-size: 0.85rem; margin-top: 5px; }
+  .demo .fleche { color: var(--accent); font-size: 1.2rem; }
+  .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(124,108,240,0.15);
+    color: var(--accent);
+    border-radius: 100px;
+    padding: 3px 10px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .note { margin-top: 36px; color: var(--dim); font-size: 0.78rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Sites vitrines <span>modernes</span>,<br>livrés en 5 jours.</h1>
+    <p class="sub">Trois exemples de réalisations — cliquez pour visiter. Chaque site est pensé pour l'activité qu'il présente : ambiance, couleurs, contenu.</p>
+    <div class="demos">
+      <a class="demo" href="restaurant-premium-demo/">
+        <div>
+          <h2>BRAISE — Restaurant gastronomique<span class="badge">Premium</span></h2>
+          <p>Thème sombre, animations, parallaxe, curseur personnalisé</p>
+        </div>
+        <span class="fleche">→</span>
+      </a>
+      <a class="demo" href="boulangerie-demo/">
+        <div>
+          <h2>Maison Aurel — Boulangerie artisanale</h2>
+          <p>Ambiance chaleureuse, présentation des produits, horaires</p>
+        </div>
+        <span class="fleche">→</span>
+      </a>
+      <a class="demo" href="coiffeur-demo/">
+        <div>
+          <h2>Studio Léane — Salon de coiffure</h2>
+          <p>Élégance sobre, prestations, prise de rendez-vous</p>
+        </div>
+        <span class="fleche">→</span>
+      </a>
+    </div>
+    <p class="note">Toutes les entreprises présentées ici sont fictives : ces sites sont des démonstrations de savoir-faire. Votre site sera conçu sur mesure pour votre activité réelle.</p>
+  </div>
+</body>
+</html>

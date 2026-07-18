@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRAISE — Cuisine au feu de bois, Marseille (démo fictive)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #0d0b09;
+    --noir-2: #151210;
+    --noir-3: #1e1a16;
+    --ivoire: #ece5da;
+    --ivoire-dim: #9b917f;
+    --braise: #e0562b;
+    --braise-soft: #f0824f;
+    --or: #c79a5b;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Manrope', Arial, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--noir);
+    color: var(--ivoire);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--braise); color: var(--noir); }
+
+  /* ---------- bandeau démo ---------- */
+  .demo-banner {
+    position: relative;
+    z-index: 300;
+    background: var(--noir-3);
+    color: var(--ivoire-dim);
+    text-align: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+  }
+
+  /* ---------- grain ---------- */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+    z-index: 200;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-shift 0.9s steps(4) infinite;
+  }
+  @keyframes grain-shift {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-2%,3%); }
+    50% { transform: translate(3%,-2%); }
+    75% { transform: translate(-3%,-3%); }
+    100% { transform: translate(2%,2%); }
+  }
+
+  /* ---------- curseur ---------- */
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 400;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--braise);
+  }
+  .cursor-ring {
+    width: 34px; height: 34px;
+    border: 1px solid rgba(224,86,43,0.5);
+    transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+  }
+  body.cursor-hover .cursor-ring {
+    width: 60px; height: 60px;
+    border-color: rgba(199,154,91,0.9);
+  }
+  @media (hover: none), (pointer: coarse) {
+    .cursor-dot, .cursor-ring { display: none; }
+  }
+
+  /* ---------- loader ---------- */
+  .loader {
+    position: fixed;
+    inset: 0;
+    background: var(--noir);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .loader.done { transform: translateY(-100%); }
+  .loader-word {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    letter-spacing: 0.35em;
+    display: flex;
+  }
+  .loader-word span {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: letter-in 0.5s forwards;
+    color: var(--ivoire);
+  }
+  .loader-word span:nth-child(1) { animation-delay: 0.08s; }
+  .loader-word span:nth-child(2) { animation-delay: 0.16s; }
+  .loader-word span:nth-child(3) { animation-delay: 0.24s; }
+  .loader-word span:nth-child(4) { animation-delay: 0.32s; color: var(--braise); }
+  .loader-word span:nth-child(5) { animation-delay: 0.40s; }
+  .loader-word span:nth-child(6) { animation-delay: 0.48s; }
+  @keyframes letter-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 250;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px clamp(20px, 5vw, 60px);
+    transition: transform 0.45s ease, background 0.45s ease, padding 0.45s ease;
+  }
+  nav.scrolled {
+    background: rgba(13,11,9,0.82);
+    backdrop-filter: blur(14px);
+    padding-top: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(236,229,218,0.06);
+  }
+  nav.hidden { transform: translateY(-110%); }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    letter-spacing: 0.3em;
+    color: var(--ivoire);
+    text-decoration: none;
+  }
+  .nav-logo em { color: var(--braise); font-style: normal; }
+  .nav-links {
+    display: flex;
+    gap: 38px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--ivoire-dim);
+    text-decoration: none;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -6px;
+    width: 100%; height: 1px;
+    background: var(--braise);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .nav-links a:hover { color: var(--ivoire); }
+  .nav-links a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 clamp(20px, 6vw, 80px);
+    overflow: hidden;
+  }
+  .hero-embers {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 45% at 75% 85%, rgba(224,86,43,0.22), transparent 65%),
+      radial-gradient(ellipse 45% 35% at 20% 15%, rgba(199,154,91,0.1), transparent 60%),
+      var(--noir);
+    animation: embers-breathe 7s ease-in-out infinite alternate;
+  }
+  @keyframes embers-breathe {
+    from { opacity: 0.75; transform: scale(1); }
+    to   { opacity: 1;   transform: scale(1.04); }
+  }
+  .particle {
+    position: absolute;
+    bottom: -10px;
+    border-radius: 50%;
+    background: var(--braise-soft);
+    opacity: 0;
+    animation: rise linear infinite;
+    pointer-events: none;
+  }
+  @keyframes rise {
+    0%   { opacity: 0; transform: translateY(0) translateX(0); }
+    12%  { opacity: 0.7; }
+    100% { opacity: 0; transform: translateY(-92vh) translateX(var(--drift, 30px)); }
+  }
+  .hero-inner { position: relative; z-index: 2; max-width: 1200px; }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 48px; height: 1px;
+    background: var(--or);
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(3rem, 10vw, 7.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 .line {
+    display: block;
+    overflow: hidden;
+  }
+  .hero h1 .line span {
+    display: block;
+    transform: translateY(110%);
+    animation: line-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .hero h1 .line:nth-child(2) span { animation-delay: 0.12s; }
+  .hero h1 .line:nth-child(3) span { animation-delay: 0.24s; }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--braise);
+  }
+  @keyframes line-up { to { transform: translateY(0); } }
+  .hero-sub {
+    margin-top: 34px;
+    max-width: 430px;
+    color: var(--ivoire-dim);
+    font-size: 1rem;
+    opacity: 0;
+    animation: fade-in 1s 0.7s forwards;
+  }
+  .hero-cta {
+    margin-top: 44px;
+    opacity: 0;
+    animation: fade-in 1s 0.9s forwards;
+  }
+  @keyframes fade-in { to { opacity: 1; } }
+  .scroll-hint {
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ivoire-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 1px; height: 44px;
+    background: linear-gradient(var(--braise), transparent);
+    animation: hint-drop 1.8s ease-in-out infinite;
+  }
+  @keyframes hint-drop {
+    0% { transform: scaleY(0); transform-origin: top; }
+    45% { transform: scaleY(1); transform-origin: top; }
+    55% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ---------- boutons ---------- */
+  .btn {
+    display: inline-block;
+    position: relative;
+    padding: 16px 44px;
+    color: var(--ivoire);
+    text-decoration: none;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    border: 1px solid rgba(236,229,218,0.28);
+    border-radius: 100px;
+    overflow: hidden;
+    transition: color 0.4s, border-color 0.4s;
+    will-change: transform;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--braise);
+    transform: translateY(101%);
+    transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+    z-index: -1;
+    border-radius: 100px;
+  }
+  .btn:hover { color: var(--noir); border-color: var(--braise); }
+  .btn:hover::before { transform: translateY(0); }
+
+  /* ---------- marquee ---------- */
+  .marquee {
+    border-top: 1px solid rgba(236,229,218,0.08);
+    border-bottom: 1px solid rgba(236,229,218,0.08);
+    overflow: hidden;
+    padding: 26px 0;
+    background: var(--noir-2);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 64px;
+    width: max-content;
+    animation: marquee 28s linear infinite;
+  }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track span {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--ivoire-dim);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 64px;
+  }
+  .marquee-track span::after {
+    content: '✦';
+    color: var(--braise);
+    font-size: 0.7rem;
+  }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* ---------- sections ---------- */
+  section { padding: clamp(90px, 13vw, 160px) clamp(20px, 6vw, 80px); position: relative; }
+  .inner { max-width: 1200px; margin: 0 auto; }
+  .kicker {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .kicker::before { content: ''; width: 40px; height: 1px; background: var(--or); }
+  .section-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    line-height: 1.1;
+    max-width: 700px;
+  }
+  .section-title em { font-style: italic; color: var(--braise); }
+
+  /* reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(48px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ---------- philosophie ---------- */
+  .philo .inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(40px, 7vw, 100px);
+    align-items: center;
+  }
+  .philo p.lead {
+    font-family: var(--serif);
+    font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+    line-height: 1.5;
+    color: var(--ivoire);
+    margin-top: 30px;
+  }
+  .philo p.body {
+    margin-top: 24px;
+    color: var(--ivoire-dim);
+    max-width: 480px;
+  }
+  .philo-visual {
+    position: relative;
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .philo-visual .ph {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 80%, rgba(224,86,43,0.5), transparent 55%),
+      radial-gradient(ellipse at 75% 20%, rgba(199,154,91,0.3), transparent 50%),
+      linear-gradient(160deg, #2a221b, #12100d);
+    display: flex;
+    align-items: end;
+    padding: 24px;
+    color: rgba(236,229,218,0.45);
+    font-size: 0.75rem;
+    font-style: italic;
+    will-change: transform;
+  }
+  .philo-visual::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(236,229,218,0.18);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .stats {
+    display: flex;
+    gap: clamp(30px, 5vw, 70px);
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+  .stat .num {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    color: var(--braise);
+    line-height: 1;
+  }
+  .stat .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ivoire-dim);
+    margin-top: 10px;
+  }
+
+  /* ---------- menu ---------- */
+  .menu { background: var(--noir-2); }
+  .menu-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 70px;
+  }
+  .menu-list { border-top: 1px solid rgba(236,229,218,0.1); }
+  .menu-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: clamp(18px, 4vw, 44px);
+    align-items: baseline;
+    padding: 30px 10px;
+    border-bottom: 1px solid rgba(236,229,218,0.1);
+    transition: background 0.35s, padding-left 0.35s;
+    position: relative;
+  }
+  .menu-item:hover {
+    background: rgba(224,86,43,0.05);
+    padding-left: 26px;
+  }
+  .menu-item .idx {
+    font-size: 0.7rem;
+    color: var(--or);
+    letter-spacing: 0.15em;
+  }
+  .menu-item h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    transition: color 0.3s;
+  }
+  .menu-item:hover h3 { color: var(--braise-soft); }
+  .menu-item p {
+    color: var(--ivoire-dim);
+    font-size: 0.88rem;
+    margin-top: 6px;
+    max-width: 560px;
+  }
+  .menu-item .prix {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--ivoire);
+    white-space: nowrap;
+  }
+  .menu-note {
+    margin-top: 34px;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--ivoire-dim);
+  }
+
+  /* ---------- expérience / bandes parallaxe ---------- */
+  .exp { overflow: hidden; }
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 70px;
+  }
+  .exp-card {
+    position: relative;
+    aspect-ratio: 3/4.2;
+    border-radius: 4px;
+    overflow: hidden;
+    will-change: transform;
+  }
+  .exp-card:nth-child(2) { transform: translateY(46px); }
+  .exp-card .bg {
+    position: absolute;
+    inset: -12%;
+    will-change: transform;
+  }
+  .exp-card:nth-child(1) .bg { background: radial-gradient(ellipse at 60% 70%, rgba(224,86,43,0.45), transparent 60%), linear-gradient(150deg, #241c15, #100e0b); }
+  .exp-card:nth-child(2) .bg { background: radial-gradient(ellipse at 40% 30%, rgba(199,154,91,0.4), transparent 55%), linear-gradient(200deg, #221a12, #0f0d0a); }
+  .exp-card:nth-child(3) .bg { background: radial-gradient(ellipse at 50% 85%, rgba(240,130,79,0.35), transparent 60%), linear-gradient(170deg, #261e16, #110f0c); }
+  .exp-card .tag {
+    position: absolute;
+    left: 22px; bottom: 20px;
+    z-index: 2;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ivoire);
+  }
+  .exp-card .tag small {
+    display: block;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--ivoire-dim);
+    margin-top: 6px;
+  }
+  @media (max-width: 760px) {
+    .exp-grid { grid-template-columns: 1fr; }
+    .exp-card:nth-child(2) { transform: none; }
+    .exp-card { aspect-ratio: 16/10; }
+  }
+
+  /* ---------- citation ---------- */
+  .quote { text-align: center; }
+  .quote blockquote {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.5rem, 3.6vw, 2.6rem);
+    line-height: 1.35;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .quote blockquote strong { color: var(--braise); font-weight: 300; }
+  .quote cite {
+    display: block;
+    margin-top: 30px;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ivoire-dim);
+  }
+
+  /* ---------- réservation ---------- */
+  .resa {
+    background:
+      radial-gradient(ellipse 55% 60% at 50% 110%, rgba(224,86,43,0.2), transparent 70%),
+      var(--noir-2);
+    text-align: center;
+    border-top: 1px solid rgba(236,229,218,0.07);
+  }
+  .resa .section-title { margin: 0 auto 20px; }
+  .resa p { color: var(--ivoire-dim); max-width: 460px; margin: 0 auto 44px; }
+  .resa-infos {
+    display: flex;
+    justify-content: center;
+    gap: clamp(30px, 6vw, 80px);
+    margin-top: 70px;
+    flex-wrap: wrap;
+    text-align: left;
+  }
+  .resa-infos > div h4 {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    color: var(--or);
+    margin-bottom: 12px;
+  }
+  .resa-infos > div p { margin: 0; font-size: 0.92rem; color: var(--ivoire); }
+
+  footer {
+    padding: 34px clamp(20px, 6vw, 80px);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: var(--ivoire-dim);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    border-top: 1px solid rgba(236,229,218,0.07);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader-word">
+    <span>B</span><span>R</span><span>A</span><span>I</span><span>S</span><span>E</span>
+  </div>
+</div>
+
+<div class="demo-banner">Site fictif — démonstration de portfolio</div>
+<div class="grain"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">BRA<em>I</em>SE</a>
+  <ul class="nav-links">
+    <li><a href="#philosophie" data-hover>La maison</a></li>
+    <li><a href="#menu" data-hover>Menu</a></li>
+    <li><a href="#experience" data-hover>Expérience</a></li>
+    <li><a href="#reservation" data-hover>Réserver</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-embers"></div>
+  <div id="particles"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Marseille — Vieux-Port</p>
+    <h1>
+      <span class="line"><span>La cuisine</span></span>
+      <span class="line"><span>commence</span></span>
+      <span class="line"><span>par le <em>feu.</em></span></span>
+    </h1>
+    <p class="hero-sub">Douze couverts, un foyer ouvert, un menu unique qui suit la mer et les saisons. Tout passe par la flamme.</p>
+    <div class="hero-cta">
+      <a href="#reservation" class="btn" data-hover data-magnetic>Réserver une table</a>
+    </div>
+  </div>
+  <div class="scroll-hint">Descendre</div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>Feu de bois</span>
+    <span>Pêche du jour</span>
+    <span>Menu unique</span>
+    <span>Vignerons nature</span>
+    <span>Douze couverts</span>
+  </div>
+</div>
+
+<section class="philo" id="philosophie">
+  <div class="inner">
+    <div>
+      <p class="kicker reveal">La maison</p>
+      <h2 class="section-title reveal" style="--d:0.08s">Un foyer, une braise, <em>rien d'autre.</em></h2>
+      <p class="lead reveal" style="--d:0.16s">Pas de gaz, pas d'électricité en cuisine. Chaque plat qui sort de chez nous a rencontré la flamme, la fumée ou la cendre.</p>
+      <p class="body reveal" style="--d:0.24s">Le chef Élio Ferran compose chaque semaine un menu unique selon la criée du matin et le maraîcher d'à côté. On s'assoit au comptoir, face au feu, et on regarde sa cuisine se faire.</p>
+      <div class="stats">
+        <div class="stat reveal" style="--d:0.3s"><div class="num" data-count="12">0</div><div class="label">couverts</div></div>
+        <div class="stat reveal" style="--d:0.38s"><div class="num" data-count="7">0</div><div class="label">services par semaine</div></div>
+        <div class="stat reveal" style="--d:0.46s"><div class="num" data-count="34">0</div><div class="label">vignerons vivants</div></div>
+      </div>
+    </div>
+    <div class="philo-visual reveal" style="--d:0.2s">
+      <div class="ph" data-parallax="0.12">[ photo du foyer — fournie par le client ]</div>
+    </div>
+  </div>
+</section>
+
+<section class="menu" id="menu">
+  <div class="inner">
+    <div class="menu-head">
+      <div>
+        <p class="kicker reveal">Cette semaine</p>
+        <h2 class="section-title reveal" style="--d:0.08s">Le menu <em>unique</em></h2>
+      </div>
+      <p class="reveal" style="--d:0.16s; color: var(--ivoire-dim); max-width: 300px; font-size: 0.85rem;">Cinq temps, servis à l'ensemble de la table. Le menu change chaque mardi.</p>
+    </div>
+    <div class="menu-list">
+      <div class="menu-item reveal">
+        <span class="idx">01</span>
+        <div>
+          <h3>Huître pochée à la braise</h3>
+          <p>Beurre fumé au sarment, condiment citron brûlé.</p>
+        </div>
+        <span class="prix">—</span>
+      </div>
+      <div class="menu-item reveal" style="--d:0.06s">
+        <span class="idx">02</span>
+        <div>
+          <h3>Poireau confit sous la cendre</h3>
+          <p>Crème crue, noisettes torréfiées au foyer, huile de livèche.</p>
+        </div>
+        <span class="prix">—</span>
+      </div>
+      <div class="menu-item reveal" style="--d:0.12s">
+        <span class="idx">03</span>
+        <div>
+          <h3>Poisson de la criée, entier, au gril</h3>
+          <p>Selon l'arrivage du matin — jus des arêtes rôties, agrumes confits.</p>
+        </div>
+        <span class="prix">—</span>
+      </div>
+      <div class="menu-item reveal" style="--d:0.18s">
+        <span class="idx">04</span>
+        <div>
+          <h3>Agneau des Alpilles, feu vif puis repos</h3>
+          <p>Cuisson lente au-dessus du foyer, aubergine brûlée, jus corsé.</p>
+        </div>
+        <span class="prix">—</span>
+      </div>
+      <div class="menu-item reveal" style="--d:0.24s">
+        <span class="idx">05</span>
+        <div>
+          <h3>Crème brûlée au bois de figuier</h3>
+          <p>Caramélisée à la braise, glace au lait fumé.</p>
+        </div>
+        <span class="prix">—</span>
+      </div>
+    </div>
+    <p class="menu-note reveal">Menu complet 85 € — accord vins vivants 45 €. Régimes et allergies : prévenez-nous à la réservation, le feu s'adapte.</p>
+  </div>
+</section>
+
+<section class="exp" id="experience">
+  <div class="inner">
+    <p class="kicker reveal">L'expérience</p>
+    <h2 class="section-title reveal" style="--d:0.08s">Une soirée <em>face au feu</em></h2>
+    <div class="exp-grid">
+      <div class="exp-card reveal">
+        <div class="bg" data-parallax="0.16"></div>
+        <div class="tag">Le comptoir<small>Douze places, aucune mauvaise</small></div>
+      </div>
+      <div class="exp-card reveal" style="--d:0.1s">
+        <div class="bg" data-parallax="0.22"></div>
+        <div class="tag">La cave<small>Vins vivants, vignerons amis</small></div>
+      </div>
+      <div class="exp-card reveal" style="--d:0.2s">
+        <div class="bg" data-parallax="0.16"></div>
+        <div class="tag">Le foyer<small>Allumé à 15h, éteint à minuit</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="inner">
+    <blockquote class="reveal">« On ne domestique pas le feu. On apprend à <strong>l'écouter</strong>, et certains soirs, il cuisine mieux que nous. »</blockquote>
+    <cite class="reveal" style="--d:0.15s">Élio Ferran — Chef &amp; fondateur</cite>
+  </div>
+</section>
+
+<section class="resa" id="reservation">
+  <div class="inner">
+    <p class="kicker reveal" style="justify-content:center">Réservation</p>
+    <h2 class="section-title reveal" style="--d:0.08s; text-align:center">Douze places. <em>Chaque soir.</em></h2>
+    <p class="reveal" style="--d:0.16s">Les réservations ouvrent le 1ᵉʳ de chaque mois pour le mois suivant. Service unique, arrivée à 19h30.</p>
+    <a href="tel:+33400000000" class="btn reveal" style="--d:0.24s" data-hover data-magnetic>04 00 00 00 00</a>
+    <div class="resa-infos">
+      <div class="reveal" style="--d:0.3s">
+        <h4>Adresse</h4>
+        <p>3 quai des Flammes<br>13002 Marseille</p>
+      </div>
+      <div class="reveal" style="--d:0.38s">
+        <h4>Ouverture</h4>
+        <p>Mardi — Samedi<br>Un seul service, 19h30</p>
+      </div>
+      <div class="reveal" style="--d:0.46s">
+        <h4>Écrire</h4>
+        <p>bonjour@braise.example</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>BRAISE — site fictif de démonstration, l'établissement n'existe pas</span>
+  <span>Marseille, Vieux-Port</span>
+</footer>
+
+<script>
+(function () {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* loader */
+  var loader = document.getElementById('loader');
+  window.addEventListener('load', function () {
+    setTimeout(function () { loader.classList.add('done'); }, reduced ? 0 : 850);
+  });
+  setTimeout(function () { loader.classList.add('done'); }, 2500); /* filet de sécurité */
+
+  /* particules de braise */
+  if (!reduced) {
+    var wrap = document.getElementById('particles');
+    for (var i = 0; i < 22; i++) {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      var size = 2 + Math.random() * 3;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
+      p.style.animationDuration = (7 + Math.random() * 9) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      wrap.appendChild(p);
+    }
+  }
+
+  /* marquee : dupliquer la piste pour une boucle parfaite */
+  var track = document.getElementById('marqueeTrack');
+  track.innerHTML += track.innerHTML;
+
+  /* nav : fond au scroll + masquage vers le bas */
+  var nav = document.getElementById('nav');
+  var lastY = 0;
+  window.addEventListener('scroll', function () {
+    var y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 60);
+    nav.classList.toggle('hidden', y > 300 && y > lastY);
+    lastY = y;
+  }, { passive: true });
+
+  /* reveal on scroll */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+  /* compteurs animés */
+  var cio = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      cio.unobserve(e.target);
+      var el = e.target, target = +el.dataset.count, start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var pr = Math.min((ts - start) / 1200, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - pr, 3)));
+        if (pr < 1) requestAnimationFrame(step);
+      }
+      reduced ? (el.textContent = target) : requestAnimationFrame(step);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('[data-count]').forEach(function (el) { cio.observe(el); });
+
+  /* parallaxe douce */
+  if (!reduced) {
+    var pEls = [].slice.call(document.querySelectorAll('[data-parallax]'));
+    var ticking = false;
+    function parallax() {
+      var vh = window.innerHeight;
+      pEls.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        var center = r.top + r.height / 2 - vh / 2;
+        el.style.transform = 'translateY(' + (-center * parseFloat(el.dataset.parallax)) + 'px)';
+      });
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { requestAnimationFrame(parallax); ticking = true; }
+    }, { passive: true });
+    parallax();
+  }
+
+  /* curseur personnalisé */
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (fine && !reduced) {
+    var dot = document.getElementById('cursorDot');
+    var ring = document.getElementById('cursorRing');
+    var mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; });
+    (function follow() {
+      rx += (mx - rx) * 0.16;
+      ry += (my - ry) * 0.16;
+      dot.style.transform = 'translate(' + (mx - 3) + 'px,' + (my - 3) + 'px)';
+      ring.style.transform = 'translate(' + (rx - 17) + 'px,' + (ry - 17) + 'px)';
+      requestAnimationFrame(follow);
+    })();
+    document.querySelectorAll('a, [data-hover]').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { document.body.classList.add('cursor-hover'); });
+      el.addEventListener('mouseleave', function () { document.body.classList.remove('cursor-hover'); });
+    });
+  }
+
+  /* boutons magnétiques */
+  if (fine && !reduced) {
+    document.querySelectorAll('[data-magnetic]').forEach(function (el) {
+      el.addEventListener('mousemove', function (e) {
+        var r = el.getBoundingClientRect();
+        var x = (e.clientX - r.left - r.width / 2) * 0.25;
+        var y = (e.clientY - r.top - r.height / 2) * 0.35;
+        el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      });
+      el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

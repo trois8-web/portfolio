@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boulangerie Maison Aurel — Pain artisanal à Lyon (site fictif de démonstration)</title>
+<style>
+  :root {
+    --brun: #3e2c1c;
+    --brun-clair: #6b4f35;
+    --creme: #faf5ec;
+    --creme-fonce: #f0e6d4;
+    --or: #c98f3d;
+    --or-fonce: #a8722a;
+    --blanc: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--brun);
+    background: var(--creme);
+    line-height: 1.6;
+  }
+  h1, h2, h3 { font-weight: normal; letter-spacing: 0.02em; }
+
+  .demo-banner {
+    background: var(--brun);
+    color: var(--creme);
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    letter-spacing: 0.05em;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    background: rgba(250, 245, 236, 0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--creme-fonce);
+    z-index: 100;
+  }
+  nav {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .logo { font-size: 1.3rem; letter-spacing: 0.08em; }
+  .logo span { color: var(--or); }
+  nav ul {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  nav a { color: var(--brun); text-decoration: none; transition: color 0.2s; }
+  nav a:hover { color: var(--or); }
+
+  .hero {
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(201,143,61,0.18), transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(107,79,53,0.12), transparent 50%),
+      var(--creme);
+    text-align: center;
+    padding: 110px 24px 90px;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    margin-bottom: 18px;
+    line-height: 1.15;
+  }
+  .hero p.sub {
+    font-size: 1.15rem;
+    color: var(--brun-clair);
+    max-width: 540px;
+    margin: 0 auto 36px;
+    font-style: italic;
+  }
+  .filet {
+    width: 70px; height: 3px;
+    background: var(--or);
+    margin: 0 auto 28px;
+    border-radius: 2px;
+  }
+  .btn {
+    display: inline-block;
+    background: var(--or);
+    color: var(--blanc);
+    padding: 14px 36px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn:hover { background: var(--or-fonce); transform: translateY(-2px); }
+
+  section { padding: 80px 24px; }
+  .inner { max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 2rem; margin-bottom: 12px; }
+  .section-sub {
+    text-align: center;
+    color: var(--brun-clair);
+    font-style: italic;
+    margin-bottom: 48px;
+  }
+
+  .produits { background: var(--blanc); }
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px;
+  }
+  .carte {
+    background: var(--creme);
+    border: 1px solid var(--creme-fonce);
+    border-radius: 6px;
+    padding: 36px 28px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .carte:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(62,44,28,0.1);
+  }
+  .carte .icone {
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: var(--or);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blanc);
+    font-size: 1.4rem;
+    font-family: Georgia, serif;
+  }
+  .carte h3 { font-size: 1.2rem; margin-bottom: 10px; }
+  .carte p { font-size: 0.95rem; color: var(--brun-clair); }
+
+  .apropos { background: var(--creme); }
+  .apropos .inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .apropos .visuel {
+    aspect-ratio: 4/3;
+    border-radius: 6px;
+    background:
+      linear-gradient(135deg, rgba(201,143,61,0.35), rgba(107,79,53,0.5)),
+      repeating-linear-gradient(45deg, var(--creme-fonce) 0 12px, var(--creme) 12px 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brun-clair);
+    font-style: italic;
+    font-size: 0.9rem;
+    border: 1px solid var(--creme-fonce);
+  }
+  .apropos h2 { font-size: 2rem; margin-bottom: 20px; }
+  .apropos p { margin-bottom: 16px; color: var(--brun-clair); }
+  .apropos strong { color: var(--brun); }
+
+  .infos { background: var(--brun); color: var(--creme); }
+  .infos .section-title { color: var(--creme); }
+  .infos .grille-infos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 40px;
+    margin-top: 48px;
+  }
+  .bloc-info h3 {
+    color: var(--or);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .bloc-info p, .bloc-info li {
+    color: rgba(250,245,236,0.85);
+    font-size: 0.98rem;
+  }
+  .bloc-info ul { list-style: none; }
+  .bloc-info li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(250,245,236,0.12);
+  }
+
+  footer {
+    background: var(--brun);
+    border-top: 1px solid rgba(250,245,236,0.15);
+    color: rgba(250,245,236,0.6);
+    text-align: center;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 720px) {
+    nav { justify-content: center; }
+    .apropos .inner { grid-template-columns: 1fr; }
+    section { padding: 56px 20px; }
+    .hero { padding: 70px 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">SITE FICTIF — DÉMONSTRATION DE PORTFOLIO. Cette entreprise n'existe pas.</div>
+
+<header>
+  <nav>
+    <div class="logo">Maison <span>Aurel</span></div>
+    <ul>
+      <li><a href="#produits">Nos pains</a></li>
+      <li><a href="#apropos">La maison</a></li>
+      <li><a href="#infos">Horaires &amp; contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="filet"></div>
+  <h1>Le pain comme on le faisait,<br>au levain naturel</h1>
+  <p class="sub">Boulangerie artisanale au cœur du 6ᵉ arrondissement de Lyon.
+  Farines locales, fermentation lente, fournées deux fois par jour.</p>
+  <a href="#infos" class="btn">Nous trouver</a>
+</section>
+
+<section class="produits" id="produits">
+  <div class="inner">
+    <h2 class="section-title">Nos spécialités</h2>
+    <p class="section-sub">Tout est pétri, façonné et cuit sur place, chaque matin.</p>
+    <div class="grille">
+      <div class="carte">
+        <div class="icone">Aé</div>
+        <h3>La Tourte Aurel</h3>
+        <p>Notre signature : tourte de meule au levain, croûte épaisse et mie crème. Fermentation de 24 heures.</p>
+      </div>
+      <div class="carte">
+        <div class="icone">Vn</div>
+        <h3>Viennoiseries</h3>
+        <p>Croissants et pains au chocolat au beurre AOP Charentes-Poitou, feuilletés à la main chaque nuit.</p>
+      </div>
+      <div class="carte">
+        <div class="icone">Sz</div>
+        <h3>Pains de saison</h3>
+        <p>Seigle-noix en hiver, focaccia aux herbes l'été. Une création qui change au rythme du marché.</p>
+      </div>
+      <div class="carte">
+        <div class="icone">Pt</div>
+        <h3>Pâtisserie simple</h3>
+        <p>Flan vanille, tarte aux pommes, cookies au chocolat : des classiques faits comme à la maison.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="apropos" id="apropos">
+  <div class="inner">
+    <div class="visuel">[ Photo du fournil — fournie par le client ]</div>
+    <div>
+      <h2>Une maison familiale depuis 1987</h2>
+      <p>Fondée par <strong>Étienne Aurel</strong>, la boulangerie est aujourd'hui menée par sa fille <strong>Claire</strong>, meilleure jeune boulangère du Rhône en 2019.</p>
+      <p>Nous travaillons exclusivement avec des <strong>farines de meule biologiques</strong> du moulin de Saint-Genis, à moins de 40 km du fournil. Pas d'additifs, pas de surgelé : du blé, de l'eau, du sel et du temps.</p>
+      <p>Chaque baguette qui sort de notre four a demandé plus de vingt heures de fermentation. C'est long. C'est ce qui fait la différence.</p>
+    </div>
+  </div>
+</section>
+
+<section class="infos" id="infos">
+  <div class="inner">
+    <h2 class="section-title">Horaires &amp; contact</h2>
+    <div class="grille-infos">
+      <div class="bloc-info">
+        <h3>Horaires</h3>
+        <ul>
+          <li><span>Mardi — Vendredi</span><span>6h30 – 19h30</span></li>
+          <li><span>Samedi</span><span>7h00 – 19h00</span></li>
+          <li><span>Dimanche</span><span>7h00 – 13h00</span></li>
+          <li><span>Lundi</span><span>Fermé</span></li>
+        </ul>
+      </div>
+      <div class="bloc-info">
+        <h3>Adresse</h3>
+        <p>12 rue des Émeraudes<br>69006 Lyon</p>
+        <p style="margin-top:12px">Métro A — Foch<br>Bus C1 — Arrêt Duquesne</p>
+      </div>
+      <div class="bloc-info">
+        <h3>Contact</h3>
+        <p>04 78 00 00 00</p>
+        <p style="margin-top:12px">bonjour@maison-aurel.example</p>
+        <p style="margin-top:12px">Commandes spéciales et gros volumes : appelez-nous 48h à l'avance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Site fictif réalisé à des fins de démonstration de portfolio — l'entreprise « Maison Aurel » n'existe pas.
+</footer>
+
+</body>
+</html>
