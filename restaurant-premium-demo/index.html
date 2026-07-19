@@ -128,6 +128,27 @@
   @keyframes letter-in {
     to { opacity: 1; transform: translateY(0); }
   }
+  .loader-pct {
+    position: absolute;
+    bottom: 7vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    color: var(--ivoire-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- barre de progression ---------- */
+  .progress {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    z-index: 260;
+    background: linear-gradient(90deg, var(--braise), var(--or));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
 
   /* ---------- nav ---------- */
   nav {
@@ -414,6 +435,14 @@
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* reveal en rideau pour les images */
+  .reveal-img {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
+  }
+  .reveal-img.visible { clip-path: inset(0 0 0 0); }
+
   /* ---------- philosophie ---------- */
   .philo .inner {
     display: grid;
@@ -540,6 +569,53 @@
     color: var(--ivoire-dim);
   }
 
+  /* photo flottante qui suit le curseur sur le menu */
+  .menu-float {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 150;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .menu-float-img {
+    width: 235px;
+    aspect-ratio: 3/4;
+    border-radius: 6px;
+    background: var(--noir-3) center/cover no-repeat;
+    opacity: 0;
+    transform: scale(0.7) rotate(-7deg);
+    transition: opacity 0.3s, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), background-image 0.2s;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+  }
+  .menu-float.show .menu-float-img {
+    opacity: 1;
+    transform: scale(1) rotate(-2.5deg);
+  }
+  @media (hover: none), (pointer: coarse) { .menu-float { display: none; } }
+
+  /* ---------- texte géant au scroll ---------- */
+  .giant {
+    overflow: hidden;
+    padding: clamp(46px, 8vw, 90px) 0;
+    background: var(--noir);
+    border-bottom: 1px solid rgba(236,229,218,0.06);
+  }
+  .giant-track {
+    white-space: nowrap;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(4.5rem, 15vw, 13rem);
+    line-height: 1.05;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(236,229,218,0.25);
+    will-change: transform;
+  }
+  .giant-track em {
+    font-style: italic;
+    color: var(--braise);
+    -webkit-text-stroke: 0;
+  }
+
   /* ---------- expérience / bandes parallaxe ---------- */
   .exp { overflow: hidden; }
   .exp-grid {
@@ -547,6 +623,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
     margin-top: 70px;
+    perspective: 1000px;
   }
   .exp-card {
     position: relative;
@@ -554,8 +631,10 @@
     border-radius: 4px;
     overflow: hidden;
     will-change: transform;
+    transform: translateY(var(--ty, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 0.18s ease-out;
   }
-  .exp-card:nth-child(2) { transform: translateY(46px); }
+  .exp-card:nth-child(2) { --ty: 46px; }
   .exp-card .bg {
     position: absolute;
     inset: -12%;
@@ -591,7 +670,7 @@
   }
   @media (max-width: 760px) {
     .exp-grid { grid-template-columns: 1fr; }
-    .exp-card:nth-child(2) { transform: none; }
+    .exp-card:nth-child(2) { --ty: 0px; }
     .exp-card { aspect-ratio: 16/10; }
   }
 
@@ -748,6 +827,48 @@
   }
   .resa-infos > div p { margin: 0; font-size: 0.92rem; color: var(--ivoire); }
 
+  /* ---------- bouton réserver flottant ---------- */
+  .cta-float {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 240;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--braise);
+    color: var(--noir);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 15px 28px;
+    border-radius: 100px;
+    box-shadow: 0 14px 38px rgba(224,86,43,0.35);
+    opacity: 0;
+    transform: translateY(90px);
+    transition: opacity 0.4s, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s;
+    pointer-events: none;
+  }
+  .cta-float::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--noir);
+    animation: cta-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes cta-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.7); }
+  }
+  .cta-float:hover { background: var(--braise-soft); }
+  body.show-cta .cta-float {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
   footer {
     padding: 34px clamp(20px, 6vw, 80px);
     display: flex;
@@ -767,6 +888,7 @@
       transition-duration: 0.01ms !important;
     }
     .reveal { opacity: 1; transform: none; }
+    .reveal-img { clip-path: none; }
     html { scroll-behavior: auto; }
   }
 </style>
@@ -777,7 +899,9 @@
   <div class="loader-word">
     <span>B</span><span>R</span><span>A</span><span>I</span><span>S</span><span>E</span>
   </div>
+  <div class="loader-pct" id="loaderPct">0&nbsp;%</div>
 </div>
+<div class="progress" id="progress"></div>
 
 <div class="demo-banner">Site fictif — démonstration de portfolio</div>
 <div class="grain"></div>
@@ -836,7 +960,7 @@
         <div class="stat reveal" style="--d:0.46s"><div class="num" data-count="34">0</div><div class="label">vignerons vivants</div></div>
       </div>
     </div>
-    <div class="philo-visual reveal" style="--d:0.2s">
+    <div class="philo-visual reveal-img" style="--d:0.2s">
       <div class="ph" data-parallax="0.12"></div>
     </div>
   </div>
@@ -851,8 +975,8 @@
       </div>
       <p class="reveal" style="--d:0.16s; color: var(--ivoire-dim); max-width: 300px; font-size: 0.85rem;">Cinq temps, servis à l'ensemble de la table. Le menu change chaque mardi.</p>
     </div>
-    <div class="menu-list">
-      <div class="menu-item reveal">
+    <div class="menu-list" id="menuList">
+      <div class="menu-item reveal" data-img="https://images.unsplash.com/photo-1572715376701-98568319fd0b?auto=format&fit=crop&w=500&q=70">
         <span class="idx">01</span>
         <div>
           <h3>Huître pochée à la braise</h3>
@@ -860,7 +984,7 @@
         </div>
         <span class="prix">—</span>
       </div>
-      <div class="menu-item reveal" style="--d:0.06s">
+      <div class="menu-item reveal" style="--d:0.06s" data-img="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=500&q=70">
         <span class="idx">02</span>
         <div>
           <h3>Poireau confit sous la cendre</h3>
@@ -868,7 +992,7 @@
         </div>
         <span class="prix">—</span>
       </div>
-      <div class="menu-item reveal" style="--d:0.12s">
+      <div class="menu-item reveal" style="--d:0.12s" data-img="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=500&q=70">
         <span class="idx">03</span>
         <div>
           <h3>Poisson de la criée, entier, au gril</h3>
@@ -876,7 +1000,7 @@
         </div>
         <span class="prix">—</span>
       </div>
-      <div class="menu-item reveal" style="--d:0.18s">
+      <div class="menu-item reveal" style="--d:0.18s" data-img="https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=500&q=70">
         <span class="idx">04</span>
         <div>
           <h3>Agneau des Alpilles, feu vif puis repos</h3>
@@ -884,7 +1008,7 @@
         </div>
         <span class="prix">—</span>
       </div>
-      <div class="menu-item reveal" style="--d:0.24s">
+      <div class="menu-item reveal" style="--d:0.24s" data-img="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=500&q=70">
         <span class="idx">05</span>
         <div>
           <h3>Crème brûlée au bois de figuier</h3>
@@ -897,20 +1021,24 @@
   </div>
 </section>
 
+<div class="giant" aria-hidden="true">
+  <div class="giant-track" id="giantTrack">Le feu ne ment <em>jamais</em> — Le feu ne ment <em>jamais</em> —</div>
+</div>
+
 <section class="exp" id="experience">
   <div class="inner">
     <p class="kicker reveal">L'expérience</p>
     <h2 class="section-title reveal" style="--d:0.08s">Une soirée <em>face au feu</em></h2>
     <div class="exp-grid">
-      <div class="exp-card reveal">
+      <div class="exp-card reveal-img" data-tilt>
         <div class="bg" data-parallax="0.16"></div>
         <div class="tag">Le comptoir<small>Douze places, aucune mauvaise</small></div>
       </div>
-      <div class="exp-card reveal" style="--d:0.1s">
+      <div class="exp-card reveal-img" style="--d:0.1s" data-tilt>
         <div class="bg" data-parallax="0.22"></div>
         <div class="tag">La cave<small>Vins vivants, vignerons amis</small></div>
       </div>
-      <div class="exp-card reveal" style="--d:0.2s">
+      <div class="exp-card reveal-img" style="--d:0.2s" data-tilt>
         <div class="bg" data-parallax="0.16"></div>
         <div class="tag">Le foyer<small>Allumé à 15h, éteint à minuit</small></div>
       </div>
@@ -998,6 +1126,12 @@
   </div>
 </section>
 
+<div class="menu-float" id="menuFloat">
+  <div class="menu-float-img" id="menuFloatImg"></div>
+</div>
+
+<a href="#reservation" class="cta-float" data-hover>Réserver</a>
+
 <footer>
   <span>BRAISE — site fictif de démonstration, l'établissement n'existe pas</span>
   <span>Marseille, Vieux-Port</span>
@@ -1007,8 +1141,21 @@
 (function () {
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* loader */
+  /* loader + compteur */
   var loader = document.getElementById('loader');
+  var pct = document.getElementById('loaderPct');
+  if (!reduced) {
+    var pctStart = null;
+    var count = function (ts) {
+      if (pctStart === null) pctStart = ts;
+      var pr = Math.min((ts - pctStart) / 750, 1);
+      pct.innerHTML = Math.round(pr * 100) + '&nbsp;%';
+      if (pr < 1) requestAnimationFrame(count);
+    };
+    requestAnimationFrame(count);
+  } else {
+    pct.innerHTML = '100&nbsp;%';
+  }
   window.addEventListener('load', function () {
     setTimeout(function () { loader.classList.add('done'); }, reduced ? 0 : 850);
   });
@@ -1035,26 +1182,63 @@
   var track = document.getElementById('marqueeTrack');
   track.innerHTML += track.innerHTML;
 
-  /* nav : fond au scroll + masquage vers le bas */
+  /* nav : fond au scroll + masquage vers le bas + barre de progression + texte géant */
   var nav = document.getElementById('nav');
+  var progress = document.getElementById('progress');
+  var giant = document.getElementById('giantTrack');
   var lastY = 0;
+  var velocity = 0;
   window.addEventListener('scroll', function () {
     var y = window.scrollY;
     nav.classList.toggle('scrolled', y > 60);
     nav.classList.toggle('hidden', y > 300 && y > lastY);
+    velocity = y - lastY;
     lastY = y;
+
+    var total = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.transform = 'scaleX(' + (total > 0 ? y / total : 0) + ')';
+
+    if (giant && !reduced) {
+      var gr = giant.parentElement.getBoundingClientRect();
+      if (gr.bottom > 0 && gr.top < window.innerHeight) {
+        var gp = 1 - gr.bottom / (window.innerHeight + gr.height);
+        var skew = Math.max(-8, Math.min(8, velocity * 0.35));
+        giant.style.transform = 'translateX(' + (-gp * 34) + '%) skewX(' + skew + 'deg)';
+      }
+    }
   }, { passive: true });
 
   /* reveal on scroll */
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      (e.target.__kids || []).forEach(function (k) { k.classList.add('visible'); });
+      io.unobserve(e.target);
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  /* un élément entièrement masqué par clip-path n'intersecte jamais : on observe son parent */
+  document.querySelectorAll('.reveal-img').forEach(function (el) {
+    var p = el.parentElement;
+    if (!p.__kids) p.__kids = [];
+    p.__kids.push(el);
+    io.observe(p);
+  });
+
+  /* bouton réserver flottant : visible après le héro, caché sur la section réservation */
+  var pastHero = false, onResa = false;
+  function ctaUpdate() {
+    document.body.classList.toggle('show-cta', pastHero && !onResa);
+  }
+  new IntersectionObserver(function (entries) {
+    pastHero = !entries[0].isIntersecting;
+    ctaUpdate();
+  }, { threshold: 0.15 }).observe(document.querySelector('.hero'));
+  new IntersectionObserver(function (entries) {
+    onResa = entries[0].isIntersecting;
+    ctaUpdate();
+  }, { threshold: 0.05 }).observe(document.getElementById('reservation'));
 
   /* compteurs animés */
   var cio = new IntersectionObserver(function (entries) {
@@ -1134,6 +1318,56 @@
         el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
       });
       el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+    });
+  }
+
+  /* menu : photo flottante qui suit le curseur */
+  if (fine && !reduced) {
+    var mFloat = document.getElementById('menuFloat');
+    var mImg = document.getElementById('menuFloatImg');
+    window.addEventListener('load', function () {
+      document.querySelectorAll('.menu-item[data-img]').forEach(function (item) {
+        new Image().src = item.dataset.img;
+      });
+    });
+    var fx = -400, fy = -400, tx = -400, ty = -400, floatOn = false;
+    document.querySelectorAll('.menu-item[data-img]').forEach(function (item) {
+      item.addEventListener('mouseenter', function () {
+        mImg.style.backgroundImage = 'url("' + item.dataset.img + '")';
+        mFloat.classList.add('show');
+        floatOn = true;
+      });
+      item.addEventListener('mouseleave', function () {
+        mFloat.classList.remove('show');
+        floatOn = false;
+      });
+      item.addEventListener('mousemove', function (e) {
+        tx = e.clientX + 28;
+        ty = e.clientY - 130;
+      });
+    });
+    (function floatFollow() {
+      fx += (tx - fx) * 0.12;
+      fy += (ty - fy) * 0.12;
+      mFloat.style.transform = 'translate(' + fx + 'px,' + fy + 'px)';
+      requestAnimationFrame(floatFollow);
+    })();
+  }
+
+  /* cartes expérience : inclinaison 3D sous le curseur */
+  if (fine && !reduced) {
+    document.querySelectorAll('[data-tilt]').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty('--ry', (px * 10) + 'deg');
+        card.style.setProperty('--rx', (-py * 10) + 'deg');
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--rx', '0deg');
+      });
     });
   }
 })();
